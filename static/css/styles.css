@@ -233,9 +233,9 @@ body::after {
   line-height: 1.6;
 }
 
-/* Theme Toggle Button - FIXED POSITION */
+/* Theme Toggle Button - STATIC POSITION */
 .theme-toggle {
-  position: fixed;
+  position: static;
   top: 20px;
   right: 20px;
   background: var(--glass-bg);
