@@ -236,8 +236,8 @@ body::after {
 /* Theme Toggle Button - FIXED POSITION */
 .theme-toggle {
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: 20px;
+  right: 20px;
   background: var(--glass-bg);
   backdrop-filter: blur(20px) saturate(180%);
   border: 2px solid var(--glass-border);
@@ -248,11 +248,11 @@ body::after {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all 0.3s ease;
   box-shadow: var(--shadow-lg);
   font-size: 1.4rem;
   color: var(--text-primary);
-  z-index: 1000;
+  z-index: 10000;
 }
 
 .theme-toggle:hover {
@@ -272,20 +272,14 @@ body::after {
 /* Mobile: Move toggle to bottom-right corner */
 @media (max-width: 768px) {
   .theme-toggle {
-    top: auto;
-    bottom: 2rem;
-    right: 1rem;
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  }
-  
-  .theme-toggle:hover {
-    transform: scale(1.05);
+    top: 20px;
+    bottom: auto;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    font-size: 1.4rem;
   }
 }
-
 /* Main Container */
 .main-container {
   max-width: 1400px;
