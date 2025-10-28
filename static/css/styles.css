@@ -12,10 +12,10 @@
   --accent-orange: #f97316;
   
   /* Background - Cool Graphics */
-  --bg-gradient-1: #667eea;
-  --bg-gradient-2: #764ba2;
-  --bg-gradient-3: #f093fb;
-  --bg-gradient-4: #4facfe;
+  --bg-gradient-1: #6930c3;
+  --bg-gradient-2: #5390d9;
+  --bg-gradient-3: #48bfe3;
+  --bg-gradient-4: #64dfdf;
   
   /* UI Colors */
   --bg-primary: #ffffff;
@@ -235,7 +235,7 @@ body::after {
 
 /* Theme Toggle Button - STATIC POSITION */
 .theme-toggle {
-  position: static;
+  position: absolute;
   top: 20px;
   right: 20px;
   background: var(--glass-bg);
