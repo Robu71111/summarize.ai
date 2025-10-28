@@ -1,0 +1,10 @@
+Flask==3.0.0
+python-dotenv==1.0.0
+requests==2.31.0
+Werkzeug==3.0.1
+
+# Optional: For future features
+# PyPDF2==3.0.1              # PDF file upload support
+# python-docx==1.1.0         # DOCX file support
+# beautifulsoup4==4.12.2     # URL summarization
+# gunicorn==21.2.0           # Production server (for deployment)
