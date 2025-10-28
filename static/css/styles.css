@@ -236,13 +236,13 @@ body::after {
 /* Theme Toggle Button - STATIC POSITION */
 .theme-toggle {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 5px;
+  right: 5px;
   background: var(--glass-bg);
   backdrop-filter: blur(20px) saturate(180%);
   border: 2px solid var(--glass-border);
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -272,11 +272,11 @@ body::after {
 /* Mobile: Move toggle to bottom-right corner */
 @media (max-width: 768px) {
   .theme-toggle {
-    top: 20px;
+    top: 5px;
     bottom: auto;
-    right: 20px;
-    width: 56px;
-    height: 56px;
+    right: 5px;
+    width: auto;
+    height: auto;
     font-size: 1.4rem;
   }
 }
