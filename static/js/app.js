@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(newTheme);
-        themeToggle.style.transform = 'translateY(-50%) rotate(0deg)';
+        themeToggle.style.transform = 'rotate(0deg)';
       }, 150);
     });
   }
