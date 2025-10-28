@@ -1,4 +1,4 @@
-// app.js - Main application JavaScript
+// app.js - Main application JavaScript with Dark Mode
 
 document.addEventListener('DOMContentLoaded', function() {
   // Elements
@@ -12,6 +12,43 @@ document.addEventListener('DOMContentLoaded', function() {
   const summarizeForm = document.getElementById('summarizeForm');
   const loadingOverlay = document.getElementById('loadingOverlay');
   const copyBtn = document.getElementById('copyBtn');
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+
+  // ==================== Dark/Light Mode Toggle ====================
+  
+  // Check for saved theme preference or default to 'light'
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  updateThemeIcon(currentTheme);
+
+  // Theme toggle click handler
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function() {
+      let theme = document.documentElement.getAttribute('data-theme');
+      let newTheme = theme === 'dark' ? 'light' : 'dark';
+      
+      // Add animation class
+      themeToggle.style.transform = 'translateY(-50%) rotate(360deg)';
+      
+      setTimeout(() => {
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+        themeToggle.style.transform = 'translateY(-50%) rotate(0deg)';
+      }, 150);
+    });
+  }
+
+  function updateThemeIcon(theme) {
+    if (themeIcon) {
+      if (theme === 'dark') {
+        themeIcon.className = 'fas fa-sun';
+      } else {
+        themeIcon.className = 'fas fa-moon';
+      }
+    }
+  }
 
   // ==================== Length Slider ====================
   function updateLengthUI(value) {
@@ -74,6 +111,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update display
     if (inputStats) {
       inputStats.textContent = `${words} words • ${chars} characters`;
+      
+      // Add warning color if approaching limit
+      if (chars > 9000) {
+        inputStats.style.color = '#ef4444';
+        inputStats.style.fontWeight = '700';
+      } else if (chars > 7500) {
+        inputStats.style.color = '#f59e0b';
+        inputStats.style.fontWeight = '600';
+      } else {
+        inputStats.style.color = '';
+        inputStats.style.fontWeight = '';
+      }
     }
   }
 
@@ -95,13 +144,13 @@ document.addEventListener('DOMContentLoaded', function() {
       // Validation
       if (!text) {
         e.preventDefault();
-        alert('Please enter some text to summarize.');
+        showNotification('Please enter some text to summarize.', 'error');
         return;
       }
       
       if (text.length > 10000) {
         e.preventDefault();
-        alert('Text is too long. Maximum 10,000 characters allowed.');
+        showNotification('Text is too long. Maximum 10,000 characters allowed.', 'error');
         return;
       }
       
@@ -167,11 +216,73 @@ document.addEventListener('DOMContentLoaded', function() {
       document.execCommand('copy');
       showCopySuccess();
     } catch (err) {
-      alert('Failed to copy text. Please copy manually.');
+      showNotification('Failed to copy text. Please copy manually.', 'error');
     }
     
     document.body.removeChild(textArea);
   }
+
+  // ==================== Notification System ====================
+  function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} notification-toast`;
+    notification.innerHTML = `
+      <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+      ${message}
+    `;
+    
+    // Add styles for toast notification
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      min-width: 300px;
+      max-width: 500px;
+      padding: 1rem 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      animation: slideInRight 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 4000);
+  }
+
+  // Add animation keyframes
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 
   // ==================== Initialize Bootstrap Tooltips ====================
   if (typeof $ !== 'undefined' && $.fn.tooltip) {
@@ -179,10 +290,15 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ==================== Auto-dismiss Alerts ====================
-  const alerts = document.querySelectorAll('.alert');
+  const alerts = document.querySelectorAll('.alert:not(.notification-toast)');
   alerts.forEach(alert => {
     setTimeout(() => {
-      $(alert).fadeOut();
+      if (typeof $ !== 'undefined') {
+        $(alert).fadeOut();
+      } else {
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 300);
+      }
     }, 5000);
   });
 
@@ -194,13 +310,13 @@ document.addEventListener('DOMContentLoaded', function() {
       const currentLength = this.value.length;
       const remaining = maxChars - currentLength;
       
-      // You could add a character counter display here
+      // Update border color based on remaining characters
       if (remaining < 500 && remaining > 0) {
-        // Near limit - could add warning UI
-        console.log(`${remaining} characters remaining`);
+        this.style.borderColor = '#f59e0b';
       } else if (remaining <= 0) {
-        // At limit
-        console.log('Character limit reached');
+        this.style.borderColor = '#ef4444';
+      } else {
+        this.style.borderColor = '';
       }
     });
   }
@@ -247,7 +363,43 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       userTextArea.focus();
     }
+    
+    // Ctrl/Cmd + D to toggle dark mode
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+      e.preventDefault();
+      themeToggle.click();
+    }
   });
 
+  // ==================== Add Entrance Animations ====================
+  const animateOnScroll = () => {
+    const elements = document.querySelectorAll('.card, .controls-card, .features-section');
+    
+    elements.forEach(element => {
+      const elementTop = element.getBoundingClientRect().top;
+      const elementBottom = element.getBoundingClientRect().bottom;
+      
+      // Check if element is in viewport
+      if (elementTop < window.innerHeight && elementBottom > 0) {
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+      }
+    });
+  };
+
+  // Initial check
+  animateOnScroll();
+  
+  // Check on scroll
+  window.addEventListener('scroll', animateOnScroll);
+
+  // ==================== Theme Transition Effect ====================
+  // Add smooth transition when changing themes
+  document.documentElement.style.transition = 'background 0.5s ease, color 0.3s ease';
+
   console.log('✨ AI Summarizer loaded successfully!');
+  console.log('💡 Keyboard shortcuts:');
+  console.log('   • Ctrl/Cmd + Enter: Submit form');
+  console.log('   • Ctrl/Cmd + K: Focus text area');
+  console.log('   • Ctrl/Cmd + D: Toggle dark mode');
 });
