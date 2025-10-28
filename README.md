@@ -1,10 +1,8 @@
 🤖 AI Text Summarizer
 An intelligent text summarization tool powered by Google's Gemini AI. Transform lengthy text into concise, meaningful summaries with customizable length and format options.
 
-Show Image
-Show Image
-Show Image
-Show Image
+LIVE DEMO URL: "https://summarize-ftsr8pere-vishvas-projects-ba99e55e.vercel.app/"
+
 
 ✨ Features
 🎯 Multiple Summary Lengths - Choose between Short, Medium, or Long summaries
