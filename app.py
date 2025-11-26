@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 MAX_INPUT_LENGTH = 10000  # Character limit
 
 def build_prompt(user_text: str, length_choice: str, mode: str = 'paragraph') -> str:
@@ -50,39 +50,48 @@ def build_prompt(user_text: str, length_choice: str, mode: str = 'paragraph') ->
         f"{user_text}"
     )
     return final_prompt
-
-def call_gemini_api(prompt_text: str) -> dict:
+def call_openrouter_api(prompt_text: str) -> dict:
     """
-    Calls the Google Gemini API and returns the result.
+    Calls the OpenRouter API with Meta Llama model.
     
     Returns:
         dict with 'success' (bool), 'text' (str), and optional 'error' (str)
     """
-    if not GOOGLE_API_KEY:
+    if not OPENROUTER_API_KEY:
         return {
             'success': False,
             'text': '',
-            'error': 'API key not configured. Please add GOOGLE_API_KEY to your .env file.'
+            'error': 'API key not configured. Please add OPENROUTER_API_KEY to your .env file.'
         }
     
-    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-live-001:generateContent?key={GOOGLE_API_KEY}"
+    endpoint = "https://openrouter.ai/api/v1/chat/completions"
+    
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://your-app-url.vercel.app",  # Optional but recommended
+        "X-Title": "AI Summarizer"  # Optional
+    }
+    
     payload = {
-        "contents": [{
-            "parts": [{"text": prompt_text}]
-        }],
-        "generationConfig": {
-            "temperature": 0.7,
-            "maxOutputTokens": 2048,
-        }
+        "model": "meta-llama/llama-3.3-70b-instruct:free",
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt_text
+            }
+        ],
+        "temperature": 0.7,
+        "max_tokens": 2048
     }
     
     try:
-        response = requests.post(endpoint, json=payload, timeout=30)
+        response = requests.post(endpoint, json=payload, headers=headers, timeout=30)
         data = response.json()
         
         if response.status_code == 200:
             try:
-                summarized_text = data["candidates"][0]["content"]["parts"][0]["text"]
+                summarized_text = data["choices"][0]["message"]["content"]
                 return {'success': True, 'text': summarized_text}
             except (KeyError, IndexError) as e:
                 return {
@@ -109,7 +118,6 @@ def call_gemini_api(prompt_text: str) -> dict:
             'text': '',
             'error': f'Exception: {str(e)}'
         }
-
 def count_words(text: str) -> int:
     """Count words in text."""
     return len(re.findall(r'\w+', text))
@@ -145,7 +153,7 @@ def generate():
     
     # Build prompt and call API
     prompt = build_prompt(user_text, length_choice, mode)
-    result = call_gemini_api(prompt)
+    result = call_openrouter_api(prompt)
     
     if not result['success']:
         return render_template(
