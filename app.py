@@ -65,7 +65,7 @@ def call_gemini_api(prompt_text: str) -> dict:
             'error': 'API key not configured. Please add GOOGLE_API_KEY to your .env file.'
         }
     
-    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GOOGLE_API_KEY}"
+    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-live-001:generateContent?key={GOOGLE_API_KEY}"
     payload = {
         "contents": [{
             "parts": [{"text": prompt_text}]
